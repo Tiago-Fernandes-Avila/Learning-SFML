@@ -1,32 +1,33 @@
 #include "FBird.hpp"
 #include <iostream>
 
-// forças
-const float VELOCITY_Y = 0.04f;
-const float STRENGTH_BIRD = 100.f;
-// rotação
-const float ROTACAO_PARA_CIMA = -35.0f;
-const float VELOCIDADE_ROTACAO_QUEDA = 100.0f; // Graus por segundo
-const float ANGULO_MAX_QUEDA = 90.0f;
-// verificação
-bool isPressed = false;
 
-// tempo
-
-    sf::Clock temporizador;
-    sf::Time tempoDecorrido = sf::seconds(0.5f);
-
-FBird::FBird() : window(sf::VideoMode(800, 600), "Flappy Bird"), texture(), birdSprite()
-{ // incializando variaveis membros
-    if (!texture.loadFromFile("assets/bird.png"))
+FBird::FBird() : window(sf::VideoMode(1000, 600), "Flappy Bird"),bird(), bg(), pipe(), birdSprite(), bgSprite(), pipeSprite(), VELOCITY_Y(0.04f), STRENGTH_BIRD(100.f), ROTACAO_PARA_CIMA(-35.0f), VELOCIDADE_ROTACAO_QUEDA(100.0f), ANGULO_MAX_QUEDA(90.0f), isPressed(false), animaInterval(sf::seconds(0.1f)){ // incializando variaveis membros
+   
+    if (!bg.loadFromFile("assets/background.png") || !bird.loadFromFile("assets/flappy.png") ||  !pipe.loadFromFile("assets/pipe.png"))
     {
-        std::cout << "bird sprite nao carregou!";
+        std::cout << "algum asset nao carregou!";
     }
-    birdSprite.setTexture(texture);
-
+    pipeSprite.setTexture(pipe);
+    birdSprite.setTexture(bird);
+    bgSprite.setTexture(bg);
     birdSprite.setOrigin(birdSprite.getTextureRect().width / 2, birdSprite.getTextureRect().height / 2);
+
+    sf::IntRect frames [3]= {
+        sf::IntRect(0, 0, 34, 24),
+        sf::IntRect(34, 0, 34, 24),
+        sf::IntRect(68, 0, 34, 24)
+    };
+    birdSprite.setTextureRect(frames[0]);
+
+   
+
+    bgSprite.setPosition(0.f, 0.0f);
     birdSprite.setPosition(360, 300);
-    birdSprite.scale(0.05f, 0.05f);
+
+   
+
+    
 }
 
 FBird::~FBird()
@@ -36,11 +37,17 @@ FBird::~FBird()
 
 void FBird::run()
 {
+    
+
     while (window.isOpen())
-    { // ordem correta em um loop principal: eventos, logica e desenho
+    {
+      // ordem correta em um loop principal: eventos, logica e desenho
         events();
         logic();
         draw();
+
+       
+        
     }
 }
 
@@ -48,9 +55,14 @@ void FBird::draw()
 {
 
     window.clear(sf::Color(70, 190, 240)); // lembre-se primeiro limpe o quadro e depois renderize os desenhos
+      window.draw(bgSprite);
     window.draw(birdSprite);
+  
     window.display();
 }
+
+
+
 void FBird::events()
 {
     sf::Event event;
@@ -65,20 +77,19 @@ void FBird::events()
         {
             if (!isPressed)
             {
-
                 birdSprite.move(0, -STRENGTH_BIRD);
+                isPressed = true;
                 if (birdSprite.getRotation() < ANGULO_MAX_QUEDA);
                 {
-                     birdSprite.rotate(ROTACAO_PARA_CIMA);
+                     birdSprite.setRotation(-20.0f);
                 }
                 
-              
-                isPressed = true;
             }
         }
         if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::Space)
         {
             isPressed = false;
+            birdSprite.setRotation(0.0f);
         }
     }
 }
@@ -91,16 +102,15 @@ void FBird::logic()
     { // evita queda livre infinita!
         birdSprite.setPosition(360, 300);
     }
-
-
-    if (temporizador.getElapsedTime().asSeconds() > tempoDecorrido.asSeconds())
-    {
-        birdSprite.rotate(1.f);
-        if (birdSprite.getRotation() >= ANGULO_MAX_QUEDA)
-        {
-            birdSprite.setRotation(ANGULO_MAX_QUEDA);
-        }
-        
+    if(birdSprite.getPosition().x < 0.0f ){
+        birdSprite.setPosition(birdSprite.getPosition().x, 5.0f);
     }
-    temporizador.restart();
+
+
+
+}
+
+
+void FBird::animations(){ //devo escrever um codigo onde em certo e certo tempo eu troque de sprite no array 
+
 }
