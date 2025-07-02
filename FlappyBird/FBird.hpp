@@ -7,9 +7,11 @@
 class FBird{
 private:
 sf::RenderWindow window;
+sf::Sprite birdSprite;
+sf::Texture texture;
 
 public:
-void run(), draw(), keys(), events();
+void run(), draw(), keys(), events(), logic();
 FBird();
 ~FBird();
 
