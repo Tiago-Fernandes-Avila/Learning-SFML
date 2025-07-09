@@ -2,47 +2,85 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
+#include <SFML/Audio.hpp>
 #include <iostream>
 #include <memory>
-
+#include<vector>
+#include <cmath>
 class FBird{
 private:
+
+
+bool isColliding();
+bool gameover;
+
+
 //janela
+
+sf::Clock timeInterval();
 sf::RenderWindow window;
 
-//fisica e estados do jogo
-const float VELOCITY_Y = 0.04f;
-const float STRENGTH_BIRD = 100.f;
-// rotação
-const float ROTACAO_PARA_CIMA = -35.0f;
-const float VELOCIDADE_ROTACAO_QUEDA = 100.0f; // Graus por segundo
-const float ANGULO_MAX_QUEDA = 90.0f;
-// verificação
-bool isPressed = false;
+float SPACE_BETWEEN_PIPES = 160.f;
+sf::Clock deltaClock;
+float gravity1 = 980.f;
+float velocity_y1 = 0;
+float deltaTime;
+
+//audio
+
+
 
 //animação
-std::vector<sf::IntRect> frames;
-int currentFrame;
-sf::Clock animationClock;
-sf::Time animaInterval;
+
+std::vector<sf::IntRect> frames; // 
+int currentFrame; // frame atual do sprite
+sf::Clock animationClock; 
+
+sf::Time animaInterval;//tempo até trocar o sprite
+//sf::Clock clock;
+//float deltaTime;
+
+//entidades pipes
+std::vector <sf::Sprite> pipesArray; //
+float alturaCanos = 140;
 
 
 //assets
-sf::Texture bg, pipe, bird;
-sf::Sprite birdSprite, bgSprite, pipeSprite;
+sf::Texture bg, pipe, bird, gameOver;
+sf::Sprite birdSprite, bgSprite, pipeSpriteBottom, pipeSpriteTop;
+
+sf::Sprite gameOverSprite;
+
+
+
+sf::Clock timeEachPipe;
+
+int count, score;
 
 //funçoes auxiliares
-void update(sf::Time dt);
+void update();
 void jump();
 
+void birdMove();
 
 
 public:
 void run(), draw(), keys(), events(), logic();
+void scoreLogic();
 FBird();
 ~FBird();
 
+
+//spawn pipes
+void printPipes();
+void spawnPipes();
+
+
+void reloadGame();
 protected:
 void animations();
-
+sf::Font font;
+sf::Text text;
+sf::Text GameOverText;
 };
+
